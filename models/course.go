@@ -13,7 +13,7 @@ type CoursesResponse struct {
 }
 
 type LectureContentSource struct {
-	Size int    `json:"size"`
+	Size any    `json:"size"`
 	Src  string `json:"src"`
 	Type string `json:"type"`
 }

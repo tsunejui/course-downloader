@@ -41,12 +41,17 @@ func (h *Hiskio) Download(path string) error {
 	}
 
 	// print courses
-	courses, err := h.getCourses()
+	completedCourses, err := h.getCourses(true)
 	if err != nil {
-		return fmt.Errorf("failed to print the courses: %v", err)
+		return fmt.Errorf("[completed] failed to print the courses: %v", err)
 	}
+	uncompletedCourses, err := h.getCourses(false)
+	if err != nil {
+		return fmt.Errorf("[uncompleted] failed to print the courses: %v", err)
+	}
+
 	for {
-		printCourses(courses)
+		courses := printCourses(completedCourses, uncompletedCourses)
 
 		// scanf course id
 		var courseId uint
@@ -58,7 +63,7 @@ func (h *Hiskio) Download(path string) error {
 		}
 
 		// print data
-		data, err := courses.FindData(courseId)
+		data, err := findCourse(courses, courseId)
 		if err != nil {
 			return fmt.Errorf("course not found: %v", err)
 		}

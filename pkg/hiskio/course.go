@@ -7,8 +7,14 @@ import (
 	"net/http"
 )
 
-func (h *Hiskio) getCourses() (models.CoursesResponse, error) {
-	url := fmt.Sprintf("%s/v2/me/courses?%s", HISKIO_URL, "search=&course_type=COURSE")
+func (h *Hiskio) getCourses(completed bool) (models.CoursesResponse, error) {
+	query := "search=&course_type=COURSE"
+	if completed {
+		query += "&status=completed"
+	}else{
+		query += "&status=uncompleted"
+	}
+	url := fmt.Sprintf("%s/v2/me/courses?%s", HISKIO_URL, query)
 	req := lib.NewHttpRequest(http.MethodGet, url, nil).WithToken(h.token)
 
 	var resp models.CoursesResponse
@@ -38,10 +44,24 @@ func (h *Hiskio) getLecture(cid, lid uint) (models.LectureResponse, error) {
 	return resp, nil
 }
 
-func printCourses(courses models.CoursesResponse) {
-	for _, data := range courses.Data {
-		fmt.Printf("%d - %s\n", data.Id, data.Title)
+func printCourses(courses ...models.CoursesResponse) []models.CoursesDataResponse {
+	data := make([]models.CoursesDataResponse, 0)
+	for _, c := range courses {
+		for _, d := range c.Data {
+			fmt.Printf("%d - %s\n", d.Id, d.Title)
+			data = append(data, d)
+		}
 	}
+	return data
+}
+
+func findCourse(data []models.CoursesDataResponse, id uint) (models.CoursesDataResponse, error) {
+	for _, d := range data {
+		if d.Id == id {
+			return d, nil
+		}
+	}
+	return models.CoursesDataResponse{}, fmt.Errorf("failed to find course: %d", id)
 }
 
 func printDataInfo(data models.CoursesDataResponse) {

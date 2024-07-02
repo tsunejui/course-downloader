@@ -79,7 +79,7 @@ func (h *HTTPClient) Run(v any) error {
 		return fmt.Errorf("failed to read data: %v", err)
 	}
 	if err := json.Unmarshal(data, v); err != nil {
-		return fmt.Errorf("failed to unmarshal data")
+		return fmt.Errorf("failed to unmarshal data: %v", err)
 	}
 	return nil
 }

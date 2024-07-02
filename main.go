@@ -23,6 +23,7 @@ func main() {
 }
 
 func run() error {
+	flag.Parse()
 	account := os.Getenv("ACCOUNT")
 	password := os.Getenv("PASSWORD")
 
